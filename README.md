@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DevBounty - Next.js Boilerplate Template
+
+A modern, responsive boilerplate for creating code-focused freelance platforms using Next.js, Shadcn UI, and Tailwind CSS.
+
+## Features
+
+- 🚀 Built with Next.js App Router
+- 🎨 Beautifully styled with Tailwind CSS
+- 🧩 Component-based architecture with Shadcn UI
+- 🔒 Authentication with Supabase
+- 🌓 Dark mode support
+- ✨ Smooth animations with Framer Motion and GSAP
+- 📱 Fully responsive design
+- 🧠 TypeScript for type safety
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
 
 ```bash
+# Recommended
+pnpm install
+# or
+npm install
+# or
+yarn install
+```
+
+Then, run the development server:
+
+```bash
+pnpm dev
+# or
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/` - Next.js application routes and layouts
+- `components/` - Reusable UI components
+  - `animations/` - Animation components using Framer Motion and GSAP
+  - `ui/` - Shadcn UI components
+- `lib/` - Utility functions and shared types
+- `public/` - Static assets
+- `utils/` - Helper functions
+- `supabase/` - Supabase client configurations
 
-## Learn More
+## Customization
 
-To learn more about Next.js, take a look at the following resources:
+### Styling
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This template uses Tailwind CSS for styling. You can customize the theme in your tailwind configuration or directly in the components.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Components
 
-## Deploy on Vercel
+All UI components are built with Shadcn and can be customized. To add more components:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm dlx shadcn@latest add button
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Authentication
+
+This template uses Supabase for authentication. Configure your Supabase credentials in the `.env.local` file:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+## Deployment
+
+Deploy this template to Vercel, Netlify, or any other hosting provider that supports Next.js applications.
+
+```bash
+pnpm build
+```
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgements
+
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Shadcn UI](https://ui.shadcn.com/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [GSAP](https://greensock.com/gsap/)
+- [Supabase](https://supabase.com/)
+- [Lucide Icons](https://lucide.dev/)
