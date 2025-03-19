@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - DevBounty</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--gray-100);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+        }
+        
+        .sidebar {
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            height: calc(100vh - 56px);
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 250px;
+            z-index: 100;
+            padding-top: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: 0.25rem;
+            margin: 0.25rem 0.75rem;
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-link:hover {
+            background-color: var(--gray-100);
+            color: var(--primary);
+        }
+        
+        .sidebar-link.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .sidebar-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            height: 100%;
+        }
+        
+        .stat-card .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .stat-card.primary .icon {
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+        
+        .stat-card.success .icon {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+        
+        .stat-card.warning .icon {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        
+        .stat-card.danger .icon {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .stat-card h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-card p {
+            color: var(--gray-600);
+            margin-bottom: 0;
+        }
+        
+        .bounty-card {
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .bounty-card.active {
+            border-left-color: var(--primary);
+        }
+        
+        .bounty-card.completed {
+            border-left-color: var(--success);
+        }
+        
+        .bounty-card.expired {
+            border-left-color: var(--danger);
+        }
+        
+        .badge-custom {
+            padding: 0.5rem 0.75rem;
+            border-radius: 50rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        
+        .badge-active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .badge-completed {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+        
+        .badge-expired {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+        
+        .badge-draft {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--gray-600);
+        }
+        
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--gray-300);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--gray-700);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: var(--primary);
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background-color: transparent;
+            border-bottom-color: var(--primary);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+        
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--gray-100);
+        }
+        
+        .dropdown-item i {
+            margin-right: 0.5rem;
+            width: 1.25rem;
+            text-align: center;
+        }
+        
+        /* Toggle sidebar */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background-color: var(--secondary);
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar-toggle {
+                display: flex;
+            }
+        }
+        
+        /* Create Bounty Form Styles */
+        .form-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-section h3 {
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+        
+        .constraint-toggle {
+            display: flex;
+            background-color: var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .constraint-toggle label {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .constraint-toggle input[type="radio"] {
+            display: none;
+        }
+        
+        .constraint-toggle input[type="radio"]:checked + label {
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: var(--primary);
+        }
+        
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            min-height: 58px;
+        }
+        
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50rem;
+            font-size: 0.875rem;
+        }
+        
+        .tag .remove {
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        
+        .tag-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.25rem;
+            min-width: 100px;
+        }
+        
+        .custom-file-upload {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            background-color: var(--gray-100);
+            border: 1px dashed var(--gray-400);
+            border-radius: 0.5rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        
+        .custom-file-upload:hover {
+            background-color: var(--gray-200);
+        }
+        
+        .custom-file-upload i {
+            margin-right: 0.5rem;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-preview {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: var(--gray-100);
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .file-preview i {
+            margin-right: 0.5rem;
+            color: var(--gray-600);
+        }
+        
+        .file-preview .remove {
+            margin-left: auto;
+            cursor: pointer;
+            color: var(--danger);
+        }
+        
+        .progress-container {
+            margin-top: 2rem;
+        }
+        
+        .progress-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--gray-300);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+        
+        .progress-step.active .step-number {
+            background-color: var(--primary);
+        }
+        
+        .progress-step.completed .step-number {
+            background-color: var(--success);
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .step-description {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            margin-left: 15px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="index.html">
+                <span class="text-primary">Dev</span>Bounty
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-3">
+                        <a class="nav-link" href="#">
+                            <i class="far fa-bell"></i>
+                            <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar me-2">JD</div>
+                            <span>John Doe</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <a href="#" class="sidebar-link active" data-page="dashboard">
+            <i class="fas fa-th-large"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="bounties">
+            <i class="fas fa-list-ul"></i>
+            <span>My Bounties</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="create-bounty">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create Bounty</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="submissions">
+            <i class="fas fa-code-branch"></i>
+            <span>Submissions</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="payments">
+            <i class="fas fa-credit-card"></i>
+            <span>Payments</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="messages">
+            <i class="fas fa-comments"></i>
+            <span>Messages</span>
+        </a>
+        <hr>
+        <a href="#" class="sidebar-link" data-page="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <a href="index.html" class="sidebar-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Page -->
+        <div class="page" id="dashboard">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Dashboard</h1>
+                <button class="btn btn-primary" id="createBountyBtn">
+                    <i class="fas fa-plus me-2"></i> Create New Bounty
+                </button>
+            </div>
+            
+            <!-- Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card primary">
+                        <div class="icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <h3>12</h3>
+                        <p>Total Bounties</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card success">
+                        <div class="icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>8</h3>
+                        <p>Completed</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card warning">
+                        <div class="icon">
+                            <i class="fas fa-code-branch"></i>
+                        </div>
+                        <h3>5</h3>
+                        <p>Active PRs</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card danger">
+                        <div class="icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h3>$2,450</h3>
+                        <p>Total Spent</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Active Bounties -->
+            <div class="card mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Active Bounties</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Title</th>
+                                    <th>Status</th>
+                                    <th>Budget</th>
+                                    <th>Submissions</th>
+                                    <th>Created</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">React Native Mobile App</div>
+                                        <div class="text-muted small">Frontend Development</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom badge-active">Active</span>
+                                    </td>
+                                    <td>$1,200</td>
+                                    <td>3 PRs</td>
+                                    <td>2 days ago</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">API Integration</div>
+                                        <div class="text-muted small">Backend Development</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom badge-active">Active</span>
+                                    </td>
+                                    <td>$800</td>
+                                    <td>1 PR</td>
+                                    <td>5 days ago</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Database Optimization</div>
+                                        <div class="text-muted small">Database</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom badge-active">Active</span>
+                                    </td>
+                                    <td>$500</td>
+                                    <td>2 PRs</td>
+                                    <td>1 week ago</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3 text-center">
+                    <a href="#" class="text-decoration-none">View All Bounties</a>
+                </div>
+            </div>
+            
+            <!-- Recent Submissions -->
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Recent Submissions</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Bounty</th>
+                                    <th>Developer</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">React Native Mobile App</div>
+                                        <div class="text-muted small">PR #3: UI Implementation</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #e74c3c;">AS</div>
+                                            <span>Alex Smith</span>
+                                        </div>
+                                    </td>
+                                    <td>Yesterday</td>
+                                    <td>
+                                        <span class="badge-custom badge-warning">Pending Review</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-primary">Review</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">API Integration</div>
+                                        <div class="text-muted small">PR #1: Authentication Endpoints</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #3498db;">JW</div>
+                                            <span>Jessica Wang</span>
+                                        </div>
+                                    </td>
+                                    <td>2 days ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-warning">Pending Review</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-primary">Review</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Database Optimization</div>
+                                        <div class="text-muted small">PR #2: Index Optimization</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #2ecc71;">MJ</div>
+                                            <span>Mike Johnson</span>
+                                        </div>
+                                    </td>
+                                    <td>3 days ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Approved</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3 text-center">
+                    <a href="#" class="text-decoration-none">View All Submissions</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Create Bounty Page -->
+        <div class="page" id="create-bounty" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Create New Bounty</h1>
+                <button class="btn btn-outline-primary" id="saveDraftBtn">
+                    <i class="fas fa-save me-2"></i> Save as Draft
+                </button>
+            </div>
+            
+            <div class="progress-container mb-4">
+                <div class="progress-step active">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Basic Information</div>
+                        <div class="step-description">Title, description, and category</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 25%"></div>
+                    </div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">Requirements & Deliverables</div>
+                        <div class="step-description">Detailed requirements and acceptance criteria</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Constraints</div>
+                        <div class="step-description">Budget or timeframe constraints</div>
+                    </div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="progress-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">Review & Publish</div>
+                        <div class="step-description">Review your bounty and publish</div>
+                    </div>
+                </div>
+            </div>
+            
+            <form id="bountyForm">
+                <!-- Step 1: Basic Information -->
+                <div class="form-step" id="step1">
+                    <div class="form-section">
+                        <h3>Basic Information</h3>
+                        <div class="mb-3">
+                            <label for="bountyTitle" class="form-label">Bounty Title</label>
+                            <input type="text" class="form-control" id="bountyTitle" placeholder="E.g., React Native Mobile App Development">
+                            <div class="form-text">Be specific and concise about what you need.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="bountyDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="bountyDescription" rows="5" placeholder="Provide a detailed description of your project..."></textarea>
+                            <div class="form-text">Explain the context and background of your project.</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="bountyCategory" class="form-label">Category</label>
+                                <select class="form-select" id="bountyCategory">
+                                    <option selected disabled>Select a category</option>
+                                    <option>Frontend Development</option>
+                                    <option>Backend Development</option>
+                                    <option>Full Stack Development</option>
+                                    <option>Mobile Development</option>
+                                    <option>UI/UX Design</option>
+                                    <option>Database</option>
+                                    <option>DevOps</option>
+                                    <option>Data Science</option>
+                                    <option>Machine Learning</option>
+                                    <option>Blockchain</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Required Skills</label>
+                                <div class="tag-input">
+                                    <div class="tag">
+                                        JavaScript <span class="remove">&times;</span>
+                                    </div>
+                                    <div class="tag">
+                                        React <span class="remove">&times;</span>
+                                    </div>
+                                    <input type="text" placeholder="Add skill..." id="skillInput">
+                                </div>
+                                <div class="form-text">Press Enter to add a skill</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary next-step" data-step="1">
+                            Next: Requirements & Deliverables <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Requirements & Deliverables -->
+                <div class="form-step" id="step2" style="display: none;">
+                    <div class="form-section">
+                        <h3>Requirements & Deliverables</h3>
+                        <div class="mb-3">
+                            <label for="requirements" class="form-label">Detailed Requirements</label>
+                            <textarea class="form-control" id="requirements" rows="5" placeholder="List all the specific requirements for this project..."></textarea>
+                            <div class="form-text">Be as specific as possible to get the best results.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deliverables" class="form-label">Deliverables</label>
+                            <textarea class="form-control" id="deliverables" rows="4" placeholder="What specific files, code, or assets do you expect to receive?"></textarea>
+                            <div class="form-text">Clearly define what you expect to receive upon completion.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="acceptanceCriteria" class="form-label">Acceptance Criteria</label>
+                            <textarea class="form-control" id="acceptanceCriteria" rows="4" placeholder="What criteria must be met for you to accept the work as complete?"></textarea>
+                            <div class="form-text">Define how you will determine if the work meets your expectations.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Additional Files</label>
+                            <label for="fileUpload" class="custom-file-upload w-100">
+                                <i class="fas fa-cloud-upload-alt"></i> Upload Files
+                            </label>
+                            <input type="file" id="fileUpload" multiple>
+                            <div id="filePreviewContainer"></div>
+                            <div class="form-text">Upload any reference files, mockups, or documentation.</div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-primary prev-step" data-step="2">
+                            <i class="fas fa-arrow-left me-2"></i> Previous: Basic Information
+                        </button>
+                        <button type="button" class="btn btn-primary next-step" data-step="2">
+                            Next: Constraints <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Constraints -->
+                <div class="form-step" id="step3" style="display: none;">
+                    <div class="form-section">
+                        <h3>Constraints</h3>
+                        <div class="mb-4">
+                            <label class="form-label">Constraint Type</label>
+                            <div class="constraint-toggle">
+                                <input type="radio" name="constraintType" id="budgetConstraint" value="budget" checked>
+                                <label for="budgetConstraint">Budget Constraint</label>
+                                <input type="radio" name="constraintType" id="timeConstraint" value="time">
+                                <label for="timeConstraint">Timeframe Constraint</label>
+                            </div>
+                        </div>
+                        
+                        <div id="budgetConstraintFields">
+                            <div class="mb-3">
+                                <label for="budget" class="form-label">Budget Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="budget" placeholder="Enter amount">
+                                </div>
+                                <div class="form-text">Set a fixed budget for this bounty.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="paymentType" class="form-label">Payment Type</label>
+                                <select class="form-select" id="paymentType">
+                                    <option selected>Fixed Price</option>
+                                    <option>Milestone Based</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div id="timeConstraintFields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="deadline" class="form-label">Deadline</label>
+                                <input type="date" class="form-control" id="deadline">
+                                <div class="form-text">Set a deadline for when you need this work completed.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="estimatedHours" class="form-label">Estimated Hours</label>
+                                <input type="number" class="form-control" id="estimatedHours" placeholder="Enter estimated hours">
+                                <div class="form-text">Provide an estimate of how many hours you think this work will take.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="visibility" class="form-label">Bounty Visibility</label>
+                            <select class="form-select" id="visibility">
+                                <option selected value="public">Public (Visible to all developers)</option>
+                                <option value="private">Private (Invite only)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-primary prev-step" data-step="3">
+                            <i class="fas fa-arrow-left me-2"></i> Previous: Requirements & Deliverables
+                        </button>
+                        <button type="button" class="btn btn-primary next-step" data-step="3">
+                            Next: Review & Publish <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Review & Publish -->
+                <div class="form-step" id="step4" style="display: none;">
+                    <div class="form-section">
+                        <h3>Review Your Bounty</h3>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Please review all the information below before publishing your bounty.
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Basic Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <strong>Title:</strong> <span id="reviewTitle"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Category:</strong> <span id="reviewCategory"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Skills:</strong> <span id="reviewSkills"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Description:</strong>
+                                    <p id="reviewDescription" class="mb-0"></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Requirements & Deliverables</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <strong>Requirements:</strong>
+                                    <p id="reviewRequirements" class="mb-0"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Deliverables:</strong>
+                                    <p id="reviewDeliverables" class="mb-0"></p>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Acceptance Criteria:</strong>
+                                    <p id="reviewAcceptanceCriteria" class="mb-0"></p>
+                                </div>
+                                <div>
+                                    <strong>Files:</strong>
+                                    <p id="reviewFiles" class="mb-0"></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Constraints</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <strong>Constraint Type:</strong> <span id="reviewConstraintType"></span>
+                                </div>
+                                <div id="reviewBudgetFields">
+                                    <div class="mb-3">
+                                        <strong>Budget:</strong> $<span id="reviewBudget"></span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Payment Type:</strong> <span id="reviewPaymentType"></span>
+                                    </div>
+                                </div>
+                                <div id="reviewTimeFields" style="display: none;">
+                                    <div class="mb-3">
+                                        <strong>Deadline:</strong> <span id="reviewDeadline"></span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Estimated Hours:</strong> <span id="reviewEstimatedHours"></span> hours
+                                    </div>
+                                </div>
+                                <div>
+                                    <strong>Visibility:</strong> <span id="reviewVisibility"></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="termsCheck">
+                            <label class="form-check-label" for="termsCheck">
+                                I agree to the <a href="#" class="text-decoration-none">Terms and Conditions</a> and <a href="#" class="text-decoration-none">Code of Conduct</a>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-primary prev-step" data-step="4">
+                            <i class="fas fa-arrow-left me-2"></i> Previous: Constraints
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="publishBtn" disabled>
+                            <i class="fas fa-rocket me-2"></i> Publish Bounty
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- My Bounties Page -->
+        <div class="page" id="bounties" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">My Bounties</h1>
+                <button class="btn btn-primary" id="createBountyBtn2">
+                    <i class="fas fa-plus me-2"></i> Create New Bounty
+                </button>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">All Bounties</h5>
+                    <div class="d-flex">
+                        <div class="input-group me-2" style="width: 250px;">
+                            <input type="text" class="form-control" placeholder="Search bounties...">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <select class="form-select" style="width: 150px;">
+                            <option selected>All Status</option>
+                            <option>Active</option>
+                            <option>Completed</option>
+                            <option>Draft</option>
+                            <option>Expired</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Title</th>
+                                    <th>Status</th>
+                                    <th>Budget/Deadline</th>
+                                    <th>Submissions</th>
+                                    <th>Created</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">React Native Mobile App</div>
+                                        <div class="text-muted small">Frontend Development</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom badge-active">Active</span>
+                                    </td>
+                                    <td>$1,200</td>
+                                    <td>3 PRs</td>
+                                    <td>2 days ago</td>
+                                    <td class="text-end pe-4">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i> View</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i> Edit</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-pause me-2"></i> Pause</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i> Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">API Integration</div>
+                                        <div class="text-muted small">Backend Development</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom badge-active">Active</span>
+                                    </td>
+                                    <td>$800</td>
+                                    <td>1 PR</td>
+                                    <td>5 days ago</td>
+                                    <td class="text-end pe-4">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i> View</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i> Edit</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-pause me-2"></i> Pause</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i> Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Database Optimization</div>
+                                        <div class="text-muted small">Database</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom badge-active">Active</span>
+                                    </td>
+                                    <td>$500</td>
+                                    <td>2 PRs</td>
+                                    <td>1 week ago</td>
+                                    <td class="text-end pe-4">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i> View</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i> Edit</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-pause me-2"></i> Pause</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i> Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">UI Design System</div>
+                                        <div class="text-muted small">UI/UX Design</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom badge-completed">Completed</span>
+                                    </td>
+                                    <td>$950</td>
+                                    <td>2 PRs</td>
+                                    <td>2 weeks ago</td>
+                                    <td class="text-end pe-4">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-eye me-2"></i> View</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-copy me-2"></i> Duplicate</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-archive me-2"></i> Archive</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Payment Gateway Integration</div>
+                                        <div class="text-muted small">Backend Development</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom badge-draft">Draft</span>
+                                    </td>
+                                    <td>$1,500</td>
+                                    <td>-</td>
+                                    <td>3 days ago</td>
+                                    <td class="text-end pe-4">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2"></i> Edit</a></li>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-rocket me-2"></i> Publish</a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash me-2"></i> Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3">
+                    <nav>
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Submissions Page -->
+        <div class="page" id="submissions" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Code Submissions</h1>
+                <div class="d-flex">
+                    <div class="input-group me-2" style="width: 250px;">
+                        <input type="text" class="form-control" placeholder="Search submissions...">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <select class="form-select" style="width: 150px;">
+                        <option selected>All Status</option>
+                        <option>Pending Review</option>
+                        <option>Approved</option>
+                        <option>Rejected</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">All Submissions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Pending Review</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Approved</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Rejected</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Bounty / PR</th>
+                                    <th>Developer</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">React Native Mobile App</div>
+                                        <div class="text-muted small">PR #3: UI Implementation</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #e74c3c;">AS</div>
+                                            <span>Alex Smith</span>
+                                        </div>
+                                    </td>
+                                    <td>Yesterday</td>
+                                    <td>
+                                        <span class="badge-custom badge-warning">Pending Review</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-primary">Review</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">API Integration</div>
+                                        <div class="text-muted small">PR #1: Authentication Endpoints</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #3498db;">JW</div>
+                                            <span>Jessica Wang</span>
+                                        </div>
+                                    </td>
+                                    <td>2 days ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-warning">Pending Review</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-primary">Review</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Database Optimization</div>
+                                        <div class="text-muted small">PR #2: Index Optimization</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #2ecc71;">MJ</div>
+                                            <span>Mike Johnson</span>
+                                        </div>
+                                    </td>
+                                    <td>3 days ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Approved</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Database Optimization</div>
+                                        <div class="text-muted small">PR #1: Query Optimization</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #9b59b6;">RL</div>
+                                            <span>Rachel Lee</span>
+                                        </div>
+                                    </td>
+                                    <td>5 days ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-danger">Rejected</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">UI Design System</div>
+                                        <div class="text-muted small">PR #2: Component Library</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #f1c40f;">TN</div>
+                                            <span>Tom Nelson</span>
+                                        </div>
+                                    </td>
+                                    <td>1 week ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Approved</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3">
+                    <nav>
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Other pages would be implemented similarly -->
+    </div>
+
+    <!-- Sidebar Toggle Button -->
+    <div class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Show the dashboard by default
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar navigation
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            const pages = document.querySelectorAll('.page');
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Hide all pages
+                    pages.forEach(page => page.style.display = 'none');
+                    
+                    // Show the selected page
+                    const pageName = this.getAttribute('data-page');
+                    document.getElementById(pageName).style.display = 'block';
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 992) {
+                        document.getElementById('sidebar').classList.remove('show');
+                    }
+                });
+            });
+            
+            // Toggle sidebar on mobile
+            document.getElementById('sidebarToggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('show');
+            });
+            
+            // Create Bounty button
+            document.getElementById('createBountyBtn').addEventListener('click', function() {
+                // Remove active class from all links
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to create bounty link
+                document.querySelector('.sidebar-link[data-page="create-bounty"]').classList.add('active');
+                
+                // Hide all pages
+                pages.forEach(page => page.style.display = 'none');
+                
+                // Show create bounty page
+                document.getElementById('create-bounty').style.display = 'block';
+            });
+            
+            // Create Bounty button on My Bounties page
+            document.getElementById('createBountyBtn2').addEventListener('click', function() {
+                // Remove active class from all links
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to create bounty link
+                document.querySelector('.sidebar-link[data-page="create-bounty"]').classList.add('active');
+                
+                // Hide all pages
+                pages.forEach(page => page.style.display = 'none');
+                
+                // Show create bounty page
+                document.getElementById('create-bounty').style.display = 'block';
+            });
+            
+            // Multi-step form navigation
+            const nextButtons = document.querySelectorAll('.next-step');
+            const prevButtons = document.querySelectorAll('.prev-step');
+            
+            nextButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentStep = parseInt(this.getAttribute('data-step'));
+                    const nextStep = currentStep + 1;
+                    
+                    // Hide current step
+                    document.getElementById(`step${currentStep}`).style.display = 'none';
+                    
+                    // Show next step
+                    document.getElementById(`step${nextStep}`).style.display = 'block';
+                    
+                    // Update progress bar
+                    const progressBars = document.querySelectorAll('.progress-bar .progress-bar');
+                    progressBars[currentStep - 1].style.width = '100%';
+                    
+                    // Update progress steps
+                    const progressSteps = document.querySelectorAll('.progress-step');
+                    progressSteps[currentStep - 1].classList.add('completed');
+                    progressSteps[currentStep].classList.add('active');
+                    
+                    // If we're on the last step, populate review fields
+                    if (nextStep === 4) {
+                        populateReviewFields();
+                    }
+                });
+            });
+            
+            prevButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const currentStep = parseInt(this.getAttribute('data-step'));
+                    const prevStep = currentStep - 1;
+                    
+                    // Hide current step
+                    document.getElementById(`step${currentStep}`).style.display = 'none';
+                    
+                    // Show previous step
+                    document.getElementById(`step${prevStep}`).style.display = 'block';
+                    
+                    // Update progress bar
+                    const progressBars = document.querySelectorAll('.progress-bar .progress-bar');
+                    progressBars[currentStep - 2].style.width = '25%';
+                    
+                    // Update progress steps
+                    const progressSteps = document.querySelectorAll('.progress-step');
+                    progressSteps[currentStep - 1].classList.remove('active');
+                    progressSteps[prevStep - 1].classList.remove('completed');
+                    progressSteps[prevStep - 1].classList.add('active');
+                });
+            });
+            
+            // Toggle constraint type
+            const constraintRadios = document.querySelectorAll('input[name="constraintType"]');
+            constraintRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'budget') {
+                        document.getElementById('budgetConstraintFields').style.display = 'block';
+                        document.getElementById('timeConstraintFields').style.display = 'none';
+                    } else {
+                        document.getElementById('budgetConstraintFields').style.display = 'none';
+                        document.getElementById('timeConstraintFields').style.display = 'block';
+                    }
+                });
+            });
+            
+            // Skills input
+            const skillInput = document.getElementById('skillInput');
+            skillInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const skill = this.value.trim();
+                    if (skill) {
+                        const tagElement = document.createElement('div');
+                        tagElement.className = 'tag';
+                        tagElement.innerHTML = `${skill} <span class="remove">&times;</span>`;
+                        
+                        // Add remove event listener
+                        const removeBtn = tagElement.querySelector('.remove');
+                        removeBtn.addEventListener('click', function() {
+                            tagElement.remove();
+                        });
+                        
+                        // Insert before the input
+                        this.parentNode.insertBefore(tagElement, this);
+                        this.value = '';
+                    }
+                }
+            });
+            
+            // File upload
+            const fileUpload = document.getElementById('fileUpload');
+            const filePreviewContainer = document.getElementById('filePreviewContainer');
+            
+            fileUpload.addEventListener('change', function() {
+                filePreviewContainer.innerHTML = '';
+                
+                Array.from(this.files).forEach(file => {
+                    const filePreview = document.createElement('div');
+                    filePreview.className = 'file-preview mt-2';
+                    filePreview.innerHTML = `
+                        <i class="fas fa-file"></i>
+                        <span>${file.name}</span>
+                        <span class="remove"><i class="fas fa-times"></i></span>
+                    `;
+                    
+                    // Add remove event listener
+                    const removeBtn = filePreview.querySelector('.remove');
+                    removeBtn.addEventListener('click', function() {
+                        filePreview.remove();
+                    });
+                    
+                    filePreviewContainer.appendChild(filePreview);
+                });
+            });
+            
+            // Terms checkbox
+            const termsCheck = document.getElementById('termsCheck');
+            const publishBtn = document.getElementById('publishBtn');
+            
+            termsCheck.addEventListener('change', function() {
+                publishBtn.disabled = !this.checked;
+            });
+            
+            // Bounty form submission
+            document.getElementById('bountyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // In a real application, you would submit the form data to the server
+                alert('Bounty published successfully!');
+                
+                // Redirect to dashboard
+                document.querySelector('.sidebar-link[data-page="dashboard"]').click();
+            });
+            
+            // Save as draft button
+            document.getElementById('saveDraftBtn').addEventListener('click', function() {
+                // In a real application, you would save the form data as a draft
+                alert('Bounty saved as draft!');
+                
+                // Redirect to my bounties
+                document.querySelector('.sidebar-link[data-page="bounties"]').click();
+            });
+            
+            // Function to populate review fields
+            function populateReviewFields() {
+                // Basic Information
+                document.getElementById('reviewTitle').textContent = document.getElementById('bountyTitle').value || 'Not specified';
+                document.getElementById('reviewCategory').textContent = document.getElementById('bountyCategory').value || 'Not specified';
+                
+                // Skills
+                const skills = [];
+                document.querySelectorAll('.tag').forEach(tag => {
+                    skills.push(tag.textContent.trim().replace('×', '').trim());
+                });
+                document.getElementById('reviewSkills').textContent = skills.join(', ') || 'None specified';
+                
+                // Description
+                document.getElementById('reviewDescription').textContent = document.getElementById('bountyDescription').value || 'Not specified';
+                
+                // Requirements & Deliverables
+                document.getElementById('reviewRequirements').textContent = document.getElementById('requirements').value || 'Not specified';
+                document.getElementById('reviewDeliverables').textContent = document.getElementById('deliverables').value || 'Not specified';
+                document.getElementById('reviewAcceptanceCriteria').textContent = document.getElementById('acceptanceCriteria').value || 'Not specified';
+                
+                // Files
+                const files = [];
+                document.querySelectorAll('.file-preview span:not(.remove)').forEach(file => {
+                    files.push(file.textContent.trim());
+                });
+                document.getElementById('reviewFiles').textContent = files.join(', ') || 'None uploaded';
+                
+                // Constraints
+                const constraintType = document.querySelector('input[name="constraintType"]:checked').value;
+                document.getElementById('reviewConstraintType').textContent = constraintType === 'budget' ? 'Budget Constraint' : 'Timeframe Constraint';
+                
+                if (constraintType === 'budget') {
+                    document.getElementById('reviewBudgetFields').style.display = 'block';
+                    document.getElementById('reviewTimeFields').style.display = 'none';
+                    document.getElementById('reviewBudget').textContent = document.getElementById('budget').value || 'Not specified';
+                    document.getElementById('reviewPaymentType').textContent = document.getElementById('paymentType').value || 'Not specified';
+                } else {
+                    document.getElementById('reviewBudgetFields').style.display = 'none';
+                    document.getElementById('reviewTimeFields').style.display = 'block';
+                    document.getElementById('reviewDeadline').textContent = document.getElementById('deadline').value || 'Not specified';
+                    document.getElementById('reviewEstimatedHours').textContent = document.getElementById('estimatedHours').value || 'Not specified';
+                }
+                
+                document.getElementById('reviewVisibility').textContent = document.getElementById('visibility').value === 'public' ? 'Public (Visible to all developers)' : 'Private (Invite only)';
+            }
+        });
+    </script>
+</body>
+</html>

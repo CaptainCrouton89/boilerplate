@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevBounty - Code-First Freelance Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 6rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+        
+        .role-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .role-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .client-icon {
+            background: linear-gradient(135deg, #ff9a8b 0%, #ff6a88 100%);
+        }
+        
+        .dev-icon {
+            background: linear-gradient(135deg, #4cc9f0 0%, #4361ee 100%);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-top: auto;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: white;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .how-it-works {
+            padding: 5rem 0;
+        }
+        
+        .step-card {
+            padding: 2rem;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            position: relative;
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: var(--primary);
+        }
+        
+        .nav-pills .nav-link {
+            color: var(--dark);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-pills .nav-link:hover:not(.active) {
+            background-color: rgba(67, 97, 238, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white py-3 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <span class="text-primary">Dev</span>Bounty
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#faq">FAQ</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <a class="btn btn-outline-primary px-4" href="#" id="loginBtn">Login</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-primary px-4" href="#choose-role">Sign Up</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">Code-First Freelancing Platform</h1>
+                    <p class="lead mb-4">DevBounty flips the script on traditional freelance platforms. Clients post bounties for work they need done, and developers submit code directly - no proposals, just results.</p>
+                    <a href="#choose-role" class="btn btn-light btn-lg px-5 py-3 fw-bold">Get Started</a>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2340&q=80" alt="Developers working" class="img-fluid rounded-3 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Choose Role Section -->
+    <section class="py-5" id="choose-role">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Choose Your Role</h2>
+                <p class="lead text-muted">Select how you want to use DevBounty</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="role-card">
+                        <div class="role-icon client-icon mx-auto">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3 class="text-center mb-3">I'm a Client</h3>
+                        <p class="text-muted mb-4">Need work done? Post bounties with clear requirements and only pay for completed code that meets your criteria.</p>
+                        <ul class="mb-4">
+                            <li>Post detailed bounties with clear deliverables</li>
+                            <li>Set your budget or timeframe constraints</li>
+                            <li>Review code submissions directly</li>
+                            <li>Pay only for completed work that meets your standards</li>
+                        </ul>
+                        <a href="client-dashboard.html" class="btn btn-primary w-100">Join as a Client</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="role-card">
+                        <div class="role-icon dev-icon mx-auto">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3 class="text-center mb-3">I'm a Developer</h3>
+                        <p class="text-muted mb-4">Find interesting projects, write code, and get paid for your work without lengthy proposal processes.</p>
+                        <ul class="mb-4">
+                            <li>Browse and filter bounties that match your skills</li>
+                            <li>Work on projects that interest you</li>
+                            <li>Submit your code directly via PR</li>
+                            <li>Get paid when your code is accepted</li>
+                        </ul>
+                        <a href="developer-dashboard.html" class="btn btn-primary w-100">Join as a Developer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works bg-light" id="how-it-works">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">How It Works</h2>
+                <p class="lead text-muted">A simple, code-focused approach to freelancing</p>
+            </div>
+            
+            <ul class="nav nav-pills mb-5 justify-content-center" id="workflowTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="client-tab" data-bs-toggle="pill" data-bs-target="#client-workflow" type="button" role="tab">For Clients</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="developer-tab" data-bs-toggle="pill" data-bs-target="#developer-workflow" type="button" role="tab">For Developers</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="workflowTabsContent">
+                <div class="tab-pane fade show active" id="client-workflow" role="tabpanel">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <h5>Post a Bounty</h5>
+                                <p class="text-muted">Create a detailed bounty with clear requirements, deliverables, and acceptance criteria.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <h5>Set Constraints</h5>
+                                <p class="text-muted">Define your budget or timeframe constraints to attract the right developers.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <h5>Review Code</h5>
+                                <p class="text-muted">Review submitted code/PRs directly in the platform.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <h5>Pay for Results</h5>
+                                <p class="text-muted">Only pay when you're satisfied with the completed work.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="developer-workflow" role="tabpanel">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <div class="step-card">
+                                <div class="step-number">1</div>
+                                <h5>Find Bounties</h5>
+                                <p class="text-muted">Browse and filter bounties that match your skills and interests.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="step-card">
+                                <div class="step-number">2</div>
+                                <h5>Work on Code</h5>
+                                <p class="text-muted">Work on the project according to the client's requirements.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="step-card">
+                                <div class="step-number">3</div>
+                                <h5>Submit PR</h5>
+                                <p class="text-muted">Submit your completed code directly via PR for review.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="step-card">
+                                <div class="step-number">4</div>
+                                <h5>Get Paid</h5>
+                                <p class="text-muted">Receive payment when your code is accepted by the client.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5" id="features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Platform Features</h2>
+                <p class="lead text-muted">Everything you need for code-first freelancing</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Direct Code Submission</h4>
+                    <p class="text-muted text-center">Submit and review code directly through PRs, focusing on what matters most.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-search-dollar"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Flexible Constraints</h4>
+                    <p class="text-muted text-center">Set either budget or timeframe constraints based on your project needs.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Clear Deliverables</h4>
+                    <p class="text-muted text-center">Detailed requirements and acceptance criteria ensure everyone's on the same page.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-filter"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Advanced Filtering</h4>
+                    <p class="text-muted text-center">Developers can find the perfect bounties with powerful search and filtering tools.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Secure Payments</h4>
+                    <p class="text-muted text-center">Escrow-based payment system protects both clients and developers.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-icon mx-auto">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4 class="text-center mb-3">Reputation System</h4>
+                    <p class="text-muted text-center">Build your reputation through successful projects and quality code.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-5 bg-light" id="faq">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Frequently Asked Questions</h2>
+                <p class="lead text-muted">Everything you need to know about DevBounty</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    How is DevBounty different from other freelance platforms?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    DevBounty focuses on code-first results rather than proposals. Developers submit actual code via PRs instead of lengthy applications, and clients review the code directly. This streamlines the process and ensures you're paying for actual results.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    How do I ensure quality work as a client?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    By providing clear requirements, deliverables, and acceptance criteria in your bounty posting. You'll be able to review the actual code submissions and only pay when the work meets your standards.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    What if multiple developers work on the same bounty?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Clients can review all submitted PRs and choose the one that best meets their requirements. Only the selected developer gets paid for their work.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    How are payments handled?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Clients fund bounties upfront, but money is held in escrow until they approve the completed work. This protects both parties and ensures fair compensation for quality work.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                    What types of projects can be posted?
+                                </button>
+                            </h2>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    DevBounty supports a wide range of software development projects, from web and mobile applications to backend systems, APIs, data analysis, and more. Any project that can be delivered as code can be posted as a bounty.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-4">Ready to get started?</h2>
+            <p class="lead mb-4">Join DevBounty today and experience a better way to connect clients with developers.</p>
+            <a href="#choose-role" class="btn btn-light btn-lg px-5 py-3 fw-bold">Sign Up Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-3">DevBounty</h5>
+                    <p class="text-muted">A code-first freelance platform that connects clients with developers through direct code submissions.</p>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-3">Platform</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">How it Works</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Features</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Pricing</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-3">Company</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Blog</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Careers</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-3">Legal</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Terms</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Privacy</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Cookies</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Licenses</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-3">Connect</h6>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-linkedin fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-github fa-lg"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-discord fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 bg-light">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="text-muted mb-md-0">© 2023 DevBounty. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted">Made with <i class="fas fa-heart text-danger"></i> for developers</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Add animation to role cards on hover
+        const roleCards = document.querySelectorAll('.role-card');
+        roleCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px)';
+                card.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+                card.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.08)';
+            });
+        });
+        
+        // Login button functionality
+        document.getElementById('loginBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Login functionality would be implemented here.');
+        });
+        
+        // Client and Developer signup buttons
+        document.querySelectorAll('.role-card .btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const role = this.textContent.includes('Client') ? 'client' : 'developer';
+                
+                // In a real implementation, this would navigate to the appropriate signup page
+                // For now, we'll just show an alert
+                alert(`You've selected to join as a ${role}. In a complete implementation, you would be directed to the ${role} signup page.`);
+                
+                // Create the client or developer dashboard pages
+                if (role === 'client') {
+                    // Navigate to client dashboard creation
+                    navigateTo('client-dashboard.html');
+                } else {
+                    // Navigate to developer dashboard creation
+                    navigateTo('developer-dashboard.html');
+                }
+            });
+        });
+        
+        // Helper function for navigation
+        function navigateTo(url, params = {}) {
+            // In a real implementation, this would navigate to the URL
+            // For now, we'll create the pages when needed
+            if (url === 'client-dashboard.html') {
+                // Request to create the client dashboard
+                requestGPT('create_client_dashboard', {
+                    message: "Create the client dashboard page"
+                });
+            } else if (url === 'developer-dashboard.html') {
+                // Request to create the developer dashboard
+                requestGPT('create_developer_dashboard', {
+                    message: "Create the developer dashboard page"
+                });
+            }
+        }
+    </script>
+</body>
+</html>

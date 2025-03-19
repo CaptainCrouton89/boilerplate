@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Dashboard - DevBounty</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-400: #ced4da;
+            --gray-500: #adb5bd;
+            --gray-600: #6c757d;
+            --gray-700: #495057;
+            --gray-800: #343a40;
+            --gray-900: #212529;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--gray-100);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+        }
+        
+        .sidebar {
+            background-color: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+            height: calc(100vh - 56px);
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 250px;
+            z-index: 100;
+            padding-top: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            border-radius: 0.25rem;
+            margin: 0.25rem 0.75rem;
+            transition: all 0.2s ease;
+        }
+        
+        .sidebar-link:hover {
+            background-color: var(--gray-100);
+            color: var(--primary);
+        }
+        
+        .sidebar-link.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .sidebar-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+            width: 1.5rem;
+            text-align: center;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            height: 100%;
+        }
+        
+        .stat-card .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .stat-card.primary .icon {
+            background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+        }
+        
+        .stat-card.success .icon {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+        
+        .stat-card.warning .icon {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        
+        .stat-card.danger .icon {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .stat-card h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-card p {
+            color: var(--gray-600);
+            margin-bottom: 0;
+        }
+        
+        .badge-custom {
+            padding: 0.5rem 0.75rem;
+            border-radius: 50rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        
+        .badge-active {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+        
+        .badge-completed {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+        
+        .badge-expired {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+        
+        .badge-draft {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: var(--gray-600);
+        }
+        
+        .badge-warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+        
+        .form-control, .form-select {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--gray-300);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .nav-tabs .nav-link {
+            color: var(--gray-700);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: var(--primary);
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background-color: transparent;
+            border-bottom-color: var(--primary);
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+        
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--gray-100);
+        }
+        
+        .dropdown-item i {
+            margin-right: 0.5rem;
+            width: 1.25rem;
+            text-align: center;
+        }
+        
+        /* Toggle sidebar */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background-color: var(--secondary);
+        }
+        
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar-toggle {
+                display: flex;
+            }
+        }
+        
+        /* Bounty Card Styles */
+        .bounty-card {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .bounty-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bounty-card .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .bounty-card .card-footer {
+            background-color: white;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .bounty-tag {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50rem;
+            background-color: var(--gray-100);
+            color: var(--gray-700);
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .bounty-tag:hover {
+            background-color: var(--gray-200);
+        }
+        
+        .client-info {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 1rem;
+        }
+        
+        .client-info .avatar {
+            width: 32px;
+            height: 32px;
+            font-size: 0.875rem;
+        }
+        
+        .client-name {
+            margin-left: 0.75rem;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+        
+        .bounty-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .bounty-meta-item {
+            display: flex;
+            align-items: center;
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+        
+        .bounty-meta-item i {
+            margin-right: 0.5rem;
+            font-size: 1rem;
+            width: 1rem;
+            text-align: center;
+        }
+        
+        /* Filter Sidebar */
+        .filter-sidebar {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .filter-sidebar h5 {
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+        
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .filter-group-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--gray-800);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .filter-group-title i {
+            transition: all 0.2s ease;
+        }
+        
+        .filter-group-title.collapsed i {
+            transform: rotate(-90deg);
+        }
+        
+        .filter-group-content {
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .form-check-label {
+            cursor: pointer;
+        }
+        
+        .range-slider {
+            margin-top: 1rem;
+        }
+        
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        
+        /* Bounty Detail Styles */
+        .bounty-detail-header {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .bounty-detail-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .bounty-detail-meta-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .bounty-detail-meta-item i {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+        }
+        
+        .bounty-detail-meta-item .label {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin-bottom: 0.25rem;
+        }
+        
+        .bounty-detail-meta-item .value {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+        
+        .bounty-detail-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .bounty-detail-section h3 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--gray-800);
+        }
+        
+        .bounty-detail-sidebar {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .client-card {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .client-card .avatar {
+            width: 48px;
+            height: 48px;
+            font-size: 1.25rem;
+            margin-right: 1rem;
+        }
+        
+        .client-card .client-info {
+            flex: 1;
+            padding-top: 0;
+        }
+        
+        .client-card .client-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-left: 0;
+            margin-bottom: 0.25rem;
+        }
+        
+        .client-card .client-meta {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        
+        .action-btn {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        
+        .action-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        /* PR Submission Form */
+        .pr-form {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .pr-form h3 {
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--gray-800);
+        }
+        
+        .custom-file-upload {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            background-color: var(--gray-100);
+            border: 1px dashed var(--gray-400);
+            border-radius: 0.5rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        
+        .custom-file-upload:hover {
+            background-color: var(--gray-200);
+        }
+        
+        .custom-file-upload i {
+            margin-right: 0.5rem;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-preview {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: var(--gray-100);
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .file-preview i {
+            margin-right: 0.5rem;
+            color: var(--gray-600);
+        }
+        
+        .file-preview .remove {
+            margin-left: auto;
+            cursor: pointer;
+            color: var(--danger);
+        }
+        
+        /* My Submissions Styles */
+        .submission-card {
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .submission-card.pending {
+            border-left-color: var(--warning);
+        }
+        
+        .submission-card.approved {
+            border-left-color: var(--success);
+        }
+        
+        .submission-card.rejected {
+            border-left-color: var(--danger);
+        }
+        
+        /* Skill Tags */
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .skill-tag {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            padding: 0.35rem 0.75rem;
+            border-radius: 50rem;
+            font-size: 0.75rem;
+        }
+        
+        /* Search Results Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+        
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--gray-100);
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .empty-state h4 {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--gray-800);
+        }
+        
+        .empty-state p {
+            color: var(--gray-600);
+            max-width: 400px;
+            margin: 0 auto 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="index.html">
+                <span class="text-primary">Dev</span>Bounty
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item me-3">
+                        <a class="nav-link" href="#">
+                            <i class="far fa-bell"></i>
+                            <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">2</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar me-2">SD</div>
+                            <span>Sarah Dev</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <a href="#" class="sidebar-link active" data-page="dashboard">
+            <i class="fas fa-th-large"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="find-bounties">
+            <i class="fas fa-search"></i>
+            <span>Find Bounties</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="my-submissions">
+            <i class="fas fa-code-branch"></i>
+            <span>My Submissions</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="earnings">
+            <i class="fas fa-dollar-sign"></i>
+            <span>Earnings</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="messages">
+            <i class="fas fa-comments"></i>
+            <span>Messages</span>
+        </a>
+        <hr>
+        <a href="#" class="sidebar-link" data-page="profile">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a href="#" class="sidebar-link" data-page="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <a href="index.html" class="sidebar-link">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Page -->
+        <div class="page" id="dashboard">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Developer Dashboard</h1>
+                <button class="btn btn-primary" id="findBountiesBtn">
+                    <i class="fas fa-search me-2"></i> Find Bounties
+                </button>
+            </div>
+            
+            <!-- Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card primary">
+                        <div class="icon">
+                            <i class="fas fa-code-branch"></i>
+                        </div>
+                        <h3>7</h3>
+                        <p>Total Submissions</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card success">
+                        <div class="icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>5</h3>
+                        <p>Approved PRs</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card warning">
+                        <div class="icon">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <h3>2</h3>
+                        <p>Pending Review</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card danger">
+                        <div class="icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h3>$1,850</h3>
+                        <p>Total Earned</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recommended Bounties -->
+            <div class="card mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Recommended Bounties</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="card bounty-card">
+                                <div class="card-body">
+                                    <span class="badge-custom badge-active mb-2">Active</span>
+                                    <h5 class="card-title">React Native Mobile App</h5>
+                                    <p class="card-text text-muted mb-3">Looking for a developer to build a React Native mobile app with clean UI and smooth animations.</p>
+                                    <div>
+                                        <span class="bounty-tag">React Native</span>
+                                        <span class="bounty-tag">JavaScript</span>
+                                        <span class="bounty-tag">Mobile</span>
+                                    </div>
+                                    <div class="client-info">
+                                        <div class="avatar">JD</div>
+                                        <span class="client-name">John Doe</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="bounty-meta">
+                                        <div class="bounty-meta-item">
+                                            <i class="fas fa-dollar-sign"></i>
+                                            <span>$1,200</span>
+                                        </div>
+                                        <div class="bounty-meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>Posted 2 days ago</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="btn btn-primary w-100 view-bounty" data-bounty-id="1">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bounty-card">
+                                <div class="card-body">
+                                    <span class="badge-custom badge-active mb-2">Active</span>
+                                    <h5 class="card-title">API Integration</h5>
+                                    <p class="card-text text-muted mb-3">Need a developer to integrate third-party APIs into our existing Node.js backend.</p>
+                                    <div>
+                                        <span class="bounty-tag">Node.js</span>
+                                        <span class="bounty-tag">API</span>
+                                        <span class="bounty-tag">Backend</span>
+                                    </div>
+                                    <div class="client-info">
+                                        <div class="avatar" style="background-color: #3498db;">AJ</div>
+                                        <span class="client-name">Alice Johnson</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="bounty-meta">
+                                        <div class="bounty-meta-item">
+                                            <i class="fas fa-dollar-sign"></i>
+                                            <span>$800</span>
+                                        </div>
+                                        <div class="bounty-meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>Posted 5 days ago</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="btn btn-primary w-100 view-bounty" data-bounty-id="2">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bounty-card">
+                                <div class="card-body">
+                                    <span class="badge-custom badge-active mb-2">Active</span>
+                                    <h5 class="card-title">Database Optimization</h5>
+                                    <p class="card-text text-muted mb-3">Looking for a database expert to optimize our PostgreSQL queries and improve performance.</p>
+                                    <div>
+                                        <span class="bounty-tag">PostgreSQL</span>
+                                        <span class="bounty-tag">SQL</span>
+                                        <span class="bounty-tag">Database</span>
+                                    </div>
+                                    <div class="client-info">
+                                        <div class="avatar" style="background-color: #2ecc71;">RB</div>
+                                        <span class="client-name">Robert Brown</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="bounty-meta">
+                                        <div class="bounty-meta-item">
+                                            <i class="fas fa-dollar-sign"></i>
+                                            <span>$500</span>
+                                        </div>
+                                        <div class="bounty-meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span>Posted 1 week ago</span>
+                                        </div>
+                                    </div>
+                                    <a href="#" class="btn btn-primary w-100 view-bounty" data-bounty-id="3">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3 text-center">
+                    <a href="#" class="text-decoration-none" id="viewAllBounties">View All Available Bounties</a>
+                </div>
+            </div>
+            
+            <!-- Recent Submissions -->
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Recent Submissions</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Bounty / PR</th>
+                                    <th>Client</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">E-commerce Website</div>
+                                        <div class="text-muted small">PR #2: Shopping Cart Implementation</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #9b59b6;">EW</div>
+                                            <span>Emma Wilson</span>
+                                        </div>
+                                    </td>
+                                    <td>Yesterday</td>
+                                    <td>
+                                        <span class="badge-custom badge-warning">Pending Review</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Authentication System</div>
+                                        <div class="text-muted small">PR #1: OAuth Integration</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #e74c3c;">MG</div>
+                                            <span>Michael Green</span>
+                                        </div>
+                                    </td>
+                                    <td>3 days ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Approved</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Data Visualization Dashboard</div>
+                                        <div class="text-muted small">PR #1: Chart Components</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #f39c12;">SL</div>
+                                            <span>Sophia Lee</span>
+                                        </div>
+                                    </td>
+                                    <td>1 week ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Approved</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3 text-center">
+                    <a href="#" class="text-decoration-none" id="viewAllSubmissions">View All Submissions</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Find Bounties Page -->
+        <div class="page" id="find-bounties" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Find Bounties</h1>
+                <div class="d-flex">
+                    <div class="input-group me-2" style="width: 300px;">
+                        <input type="text" class="form-control" placeholder="Search bounties..." id="searchInput">
+                        <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <select class="form-select" style="width: 150px;" id="sortSelect">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="highest">Highest Budget</option>
+                        <option value="lowest">Lowest Budget</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <!-- Filter Sidebar -->
+                <div class="col-lg-3">
+                    <div class="filter-sidebar">
+                        <h5>Filters</h5>
+                        
+                        <div class="filter-group">
+                            <div class="filter-group-title" data-bs-toggle="collapse" data-bs-target="#categoryFilters">
+                                <span>Categories</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="collapse show" id="categoryFilters">
+                                <div class="filter-group-content">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="frontendCheck" checked>
+                                        <label class="form-check-label" for="frontendCheck">
+                                            Frontend Development
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="backendCheck" checked>
+                                        <label class="form-check-label" for="backendCheck">
+                                            Backend Development
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="mobileCheck" checked>
+                                        <label class="form-check-label" for="mobileCheck">
+                                            Mobile Development
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="uiuxCheck">
+                                        <label class="form-check-label" for="uiuxCheck">
+                                            UI/UX Design
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="databaseCheck" checked>
+                                        <label class="form-check-label" for="databaseCheck">
+                                            Database
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="devopsCheck">
+                                        <label class="form-check-label" for="devopsCheck">
+                                            DevOps
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="otherCheck">
+                                        <label class="form-check-label" for="otherCheck">
+                                            Other
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <div class="filter-group-title" data-bs-toggle="collapse" data-bs-target="#skillFilters">
+                                <span>Skills</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="collapse show" id="skillFilters">
+                                <div class="filter-group-content">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="javascriptCheck" checked>
+                                        <label class="form-check-label" for="javascriptCheck">
+                                            JavaScript
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="reactCheck" checked>
+                                        <label class="form-check-label" for="reactCheck">
+                                            React
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="nodeCheck" checked>
+                                        <label class="form-check-label" for="nodeCheck">
+                                            Node.js
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="pythonCheck">
+                                        <label class="form-check-label" for="pythonCheck">
+                                            Python
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="sqlCheck" checked>
+                                        <label class="form-check-label" for="sqlCheck">
+                                            SQL
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="awsCheck">
+                                        <label class="form-check-label" for="awsCheck">
+                                            AWS
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <div class="filter-group-title" data-bs-toggle="collapse" data-bs-target="#budgetFilters">
+                                <span>Budget Range</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="collapse show" id="budgetFilters">
+                                <div class="filter-group-content">
+                                    <input type="range" class="form-range range-slider" min="100" max="5000" step="100" value="5000" id="budgetRange">
+                                    <div class="range-values">
+                                        <span>$100</span>
+                                        <span id="budgetValue">$5,000+</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group mb-0">
+                            <div class="filter-group-title" data-bs-toggle="collapse" data-bs-target="#statusFilters">
+                                <span>Status</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="collapse show" id="statusFilters">
+                                <div class="filter-group-content">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="activeCheck" checked>
+                                        <label class="form-check-label" for="activeCheck">
+                                            Active
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button class="btn btn-primary" id="applyFiltersBtn">Apply Filters</button>
+                            <button class="btn btn-outline-secondary" id="resetFiltersBtn">Reset Filters</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bounties List -->
+                <div class="col-lg-9">
+                    <div class="card mb-4">
+                        <div class="card-header bg-white py-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Available Bounties</h5>
+                                <span class="text-muted">Showing 12 of 42 bounties</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row g-4" id="bountiesList">
+                                <!-- Bounty Card 1 -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card bounty-card">
+                                        <div class="card-body">
+                                            <span class="badge-custom badge-active mb-2">Active</span>
+                                            <h5 class="card-title">React Native Mobile App</h5>
+                                            <p class="card-text text-muted mb-3">Looking for a developer to build a React Native mobile app with clean UI and smooth animations.</p>
+                                            <div>
+                                                <span class="bounty-tag">React Native</span>
+                                                <span class="bounty-tag">JavaScript</span>
+                                                <span class="bounty-tag">Mobile</span>
+                                            </div>
+                                            <div class="client-info">
+                                                <div class="avatar">JD</div>
+                                                <span class="client-name">John Doe</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="bounty-meta">
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                    <span>$1,200</span>
+                                                </div>
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <span>2 days ago</span>
+                                                </div>
+                                            </div>
+                                            <a href="#" class="btn btn-primary w-100 view-bounty" data-bounty-id="1">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bounty Card 2 -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card bounty-card">
+                                        <div class="card-body">
+                                            <span class="badge-custom badge-active mb-2">Active</span>
+                                            <h5 class="card-title">API Integration</h5>
+                                            <p class="card-text text-muted mb-3">Need a developer to integrate third-party APIs into our existing Node.js backend.</p>
+                                            <div>
+                                                <span class="bounty-tag">Node.js</span>
+                                                <span class="bounty-tag">API</span>
+                                                <span class="bounty-tag">Backend</span>
+                                            </div>
+                                            <div class="client-info">
+                                                <div class="avatar" style="background-color: #3498db;">AJ</div>
+                                                <span class="client-name">Alice Johnson</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="bounty-meta">
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                    <span>$800</span>
+                                                </div>
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <span>5 days ago</span>
+                                                </div>
+                                            </div>
+                                            <a href="#" class="btn btn-primary w-100 view-bounty" data-bounty-id="2">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bounty Card 3 -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card bounty-card">
+                                        <div class="card-body">
+                                            <span class="badge-custom badge-active mb-2">Active</span>
+                                            <h5 class="card-title">Database Optimization</h5>
+                                            <p class="card-text text-muted mb-3">Looking for a database expert to optimize our PostgreSQL queries and improve performance.</p>
+                                            <div>
+                                                <span class="bounty-tag">PostgreSQL</span>
+                                                <span class="bounty-tag">SQL</span>
+                                                <span class="bounty-tag">Database</span>
+                                            </div>
+                                            <div class="client-info">
+                                                <div class="avatar" style="background-color: #2ecc71;">RB</div>
+                                                <span class="client-name">Robert Brown</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="bounty-meta">
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                    <span>$500</span>
+                                                </div>
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <span>1 week ago</span>
+                                                </div>
+                                            </div>
+                                            <a href="#" class="btn btn-primary w-100 view-bounty" data-bounty-id="3">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bounty Card 4 -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card bounty-card">
+                                        <div class="card-body">
+                                            <span class="badge-custom badge-active mb-2">Active</span>
+                                            <h5 class="card-title">E-commerce Website</h5>
+                                            <p class="card-text text-muted mb-3">Need a developer to implement shopping cart functionality for our e-commerce website.</p>
+                                            <div>
+                                                <span class="bounty-tag">JavaScript</span>
+                                                <span class="bounty-tag">React</span>
+                                                <span class="bounty-tag">Frontend</span>
+                                            </div>
+                                            <div class="client-info">
+                                                <div class="avatar" style="background-color: #9b59b6;">EW</div>
+                                                <span class="client-name">Emma Wilson</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="bounty-meta">
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                    <span>$950</span>
+                                                </div>
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <span>3 days ago</span>
+                                                </div>
+                                            </div>
+                                            <a href="#" class="btn btn-primary w-100 view-bounty" data-bounty-id="4">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bounty Card 5 -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card bounty-card">
+                                        <div class="card-body">
+                                            <span class="badge-custom badge-active mb-2">Active</span>
+                                            <h5 class="card-title">Authentication System</h5>
+                                            <p class="card-text text-muted mb-3">Looking for a developer to implement OAuth authentication for our web application.</p>
+                                            <div>
+                                                <span class="bounty-tag">Node.js</span>
+                                                <span class="bounty-tag">OAuth</span>
+                                                <span class="bounty-tag">Security</span>
+                                            </div>
+                                            <div class="client-info">
+                                                <div class="avatar" style="background-color: #e74c3c;">MG</div>
+                                                <span class="client-name">Michael Green</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="bounty-meta">
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                    <span>$700</span>
+                                                </div>
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <span>4 days ago</span>
+                                                </div>
+                                            </div>
+                                            <a href="#" class="btn btn-primary w-100 view-bounty" data-bounty-id="5">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bounty Card 6 -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card bounty-card">
+                                        <div class="card-body">
+                                            <span class="badge-custom badge-active mb-2">Active</span>
+                                            <h5 class="card-title">Data Visualization Dashboard</h5>
+                                            <p class="card-text text-muted mb-3">Need a developer to create interactive data visualization components using D3.js.</p>
+                                            <div>
+                                                <span class="bounty-tag">D3.js</span>
+                                                <span class="bounty-tag">JavaScript</span>
+                                                <span class="bounty-tag">Data Viz</span>
+                                            </div>
+                                            <div class="client-info">
+                                                <div class="avatar" style="background-color: #f39c12;">SL</div>
+                                                <span class="client-name">Sophia Lee</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <div class="bounty-meta">
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                    <span>$1,100</span>
+                                                </div>
+                                                <div class="bounty-meta-item">
+                                                    <i class="fas fa-calendar"></i>
+                                                    <span>6 days ago</span>
+                                                </div>
+                                            </div>
+                                            <a href="#" class="btn btn-primary w-100 view-bounty" data-bounty-id="6">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white py-3">
+                            <nav>
+                                <ul class="pagination justify-content-center mb-0">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Next</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bounty Detail Page -->
+        <div class="page" id="bounty-detail" style="display: none;">
+            <div class="d-flex align-items-center mb-4">
+                <button class="btn btn-outline-primary me-3" id="backToBounties">
+                    <i class="fas fa-arrow-left me-2"></i> Back to Bounties
+                </button>
+                <h1 class="mb-0" id="bountyDetailTitle">React Native Mobile App</h1>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <!-- Bounty Header -->
+                    <div class="bounty-detail-header">
+                        <span class="badge-custom badge-active">Active</span>
+                        <p class="mt-3 mb-4">Looking for a developer to build a React Native mobile app with clean UI and smooth animations. The app should include user authentication, profile management, and integration with our existing API.</p>
+                        
+                        <div class="skill-tags">
+                            <span class="skill-tag">React Native</span>
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">Mobile</span>
+                            <span class="skill-tag">UI/UX</span>
+                            <span class="skill-tag">API Integration</span>
+                        </div>
+                        
+                        <div class="bounty-detail-meta">
+                            <div class="bounty-detail-meta-item">
+                                <i class="fas fa-dollar-sign"></i>
+                                <div>
+                                    <div class="label">Budget</div>
+                                    <div class="value">$1,200</div>
+                                </div>
+                            </div>
+                            <div class="bounty-detail-meta-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <div>
+                                    <div class="label">Posted</div>
+                                    <div class="value">2 days ago</div>
+                                </div>
+                            </div>
+                            <div class="bounty-detail-meta-item">
+                                <i class="fas fa-code-branch"></i>
+                                <div>
+                                    <div class="label">Submissions</div>
+                                    <div class="value">3 PRs</div>
+                                </div>
+                            </div>
+                            <div class="bounty-detail-meta-item">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <div class="label">Estimated Time</div>
+                                    <div class="value">2-3 weeks</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Requirements Section -->
+                    <div class="bounty-detail-section">
+                        <h3>Requirements</h3>
+                        <div class="mb-4">
+                            <p>We're looking for a React Native developer to build a mobile app with the following features:</p>
+                            <ul>
+                                <li>User authentication (login, signup, password reset)</li>
+                                <li>User profile management</li>
+                                <li>Integration with our existing RESTful API</li>
+                                <li>Clean, modern UI with smooth animations</li>
+                                <li>Support for both iOS and Android platforms</li>
+                                <li>Offline functionality for core features</li>
+                                <li>Push notifications</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Deliverables Section -->
+                    <div class="bounty-detail-section">
+                        <h3>Deliverables</h3>
+                        <div class="mb-4">
+                            <ul>
+                                <li>Complete React Native codebase</li>
+                                <li>Documentation for setup and deployment</li>
+                                <li>Unit tests for core functionality</li>
+                                <li>APK file for Android and build files for iOS</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Acceptance Criteria Section -->
+                    <div class="bounty-detail-section">
+                        <h3>Acceptance Criteria</h3>
+                        <div class="mb-4">
+                            <ul>
+                                <li>All features working as specified in the requirements</li>
+                                <li>Code is well-structured and follows React Native best practices</li>
+                                <li>App works on both iOS and Android platforms</li>
+                                <li>UI matches the provided design mockups</li>
+                                <li>All API integrations working correctly</li>
+                                <li>No critical bugs or performance issues</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit PR Section -->
+                    <div class="bounty-detail-section">
+                        <h3>Submit Your Code</h3>
+                        <div class="pr-form">
+                            <div class="mb-3">
+                                <label for="prTitle" class="form-label">PR Title</label>
+                                <input type="text" class="form-control" id="prTitle" placeholder="E.g., Implement User Authentication">
+                            </div>
+                            <div class="mb-3">
+                                <label for="prDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="prDescription" rows="4" placeholder="Describe what your code implements and any important details..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="prUrl" class="form-label">GitHub PR URL</label>
+                                <input type="text" class="form-control" id="prUrl" placeholder="https://github.com/username/repo/pull/123">
+                                <div class="form-text">Provide a link to your Pull Request on GitHub</div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Additional Files (Optional)</label>
+                                <label for="prFileUpload" class="custom-file-upload">
+                                    <i class="fas fa-cloud-upload-alt"></i> Upload Files
+                                </label>
+                                <input type="file" id="prFileUpload" multiple>
+                                <div id="prFilePreviewContainer"></div>
+                                <div class="form-text">Upload any additional files or documentation</div>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="prTermsCheck">
+                                <label class="form-check-label" for="prTermsCheck">
+                                    I confirm that this is my original work and I have the right to submit it
+                                </label>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="submitPrBtn" disabled>
+                                <i class="fas fa-code-branch me-2"></i> Submit PR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <!-- Client Info Sidebar -->
+                    <div class="bounty-detail-sidebar">
+                        <div class="client-card">
+                            <div class="avatar">JD</div>
+                            <div class="client-info">
+                                <div class="client-name">John Doe</div>
+                                <div class="client-meta">Client • 12 bounties posted</div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary action-btn" id="workOnBountyBtn">
+                            <i class="fas fa-code"></i> Work on this Bounty
+                        </button>
+                        
+                        <button class="btn btn-outline-primary action-btn" id="saveForLaterBtn">
+                            <i class="far fa-bookmark"></i> Save for Later
+                        </button>
+                        
+                        <hr>
+                        
+                        <h6 class="fw-bold mb-3">Bounty Details</h6>
+                        
+                        <div class="mb-3">
+                            <div class="text-muted mb-1">Payment Type</div>
+                            <div>Fixed Price</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="text-muted mb-1">Experience Level</div>
+                            <div>Intermediate</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="text-muted mb-1">Project Size</div>
+                            <div>Medium</div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h6 class="fw-bold mb-3">Activity</h6>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <div class="text-muted">Submissions</div>
+                                <div class="fw-bold">3</div>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 30%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <div class="text-muted">Views</div>
+                                <div class="fw-bold">42</div>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <div class="text-muted">Saved</div>
+                                <div class="fw-bold">15</div>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 25%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- My Submissions Page -->
+        <div class="page" id="my-submissions" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">My Submissions</h1>
+                <div class="d-flex">
+                    <div class="input-group me-2" style="width: 250px;">
+                        <input type="text" class="form-control" placeholder="Search submissions...">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <select class="form-select" style="width: 150px;">
+                        <option selected>All Status</option>
+                        <option>Pending Review</option>
+                        <option>Approved</option>
+                        <option>Rejected</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">All Submissions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Pending Review</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Approved</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Rejected</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Bounty / PR</th>
+                                    <th>Client</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th>Budget</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="submission-card pending">
+                                    <td class="ps-4">
+                                        <div class="fw-bold">E-commerce Website</div>
+                                        <div class="text-muted small">PR #2: Shopping Cart Implementation</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #9b59b6;">EW</div>
+                                            <span>Emma Wilson</span>
+                                        </div>
+                                    </td>
+                                    <td>Yesterday</td>
+                                    <td>
+                                        <span class="badge-custom badge-warning">Pending Review</span>
+                                    </td>
+                                    <td>$950</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr class="submission-card approved">
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Authentication System</div>
+                                        <div class="text-muted small">PR #1: OAuth Integration</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #e74c3c;">MG</div>
+                                            <span>Michael Green</span>
+                                        </div>
+                                    </td>
+                                    <td>3 days ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Approved</span>
+                                    </td>
+                                    <td>$700</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr class="submission-card approved">
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Data Visualization Dashboard</div>
+                                        <div class="text-muted small">PR #1: Chart Components</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #f39c12;">SL</div>
+                                            <span>Sophia Lee</span>
+                                        </div>
+                                    </td>
+                                    <td>1 week ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Approved</span>
+                                    </td>
+                                    <td>$1,100</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr class="submission-card rejected">
+                                    <td class="ps-4">
+                                        <div class="fw-bold">CRM System</div>
+                                        <div class="text-muted small">PR #1: Contact Management</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #1abc9c;">DT</div>
+                                            <span>David Thompson</span>
+                                        </div>
+                                    </td>
+                                    <td>2 weeks ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-danger">Rejected</span>
+                                    </td>
+                                    <td>$850</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr class="submission-card approved">
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Blog Platform</div>
+                                        <div class="text-muted small">PR #1: Comment System</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #3498db;">LM</div>
+                                            <span>Lisa Miller</span>
+                                        </div>
+                                    </td>
+                                    <td>3 weeks ago</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Approved</span>
+                                    </td>
+                                    <td>$600</td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3">
+                    <nav>
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Earnings Page -->
+        <div class="page" id="earnings" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="mb-0">Earnings</h1>
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="timeRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-calendar me-2"></i> Last 30 Days
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="timeRangeDropdown">
+                        <li><a class="dropdown-item" href="#">Last 7 Days</a></li>
+                        <li><a class="dropdown-item active" href="#">Last 30 Days</a></li>
+                        <li><a class="dropdown-item" href="#">Last 90 Days</a></li>
+                        <li><a class="dropdown-item" href="#">This Year</a></li>
+                        <li><a class="dropdown-item" href="#">All Time</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card primary">
+                        <div class="icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h3>$1,850</h3>
+                        <p>Total Earned</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card success">
+                        <div class="icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>5</h3>
+                        <p>Completed Bounties</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card warning">
+                        <div class="icon">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <h3>$950</h3>
+                        <p>Pending Payments</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card danger">
+                        <div class="icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>$370</h3>
+                        <p>Avg. per Bounty</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Earnings Chart -->
+            <div class="card mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Earnings Over Time</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px; background-color: #f8f9fa; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                        <p class="text-muted mb-0">Earnings chart would be displayed here</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment History -->
+            <div class="card">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0">Payment History</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4">Bounty</th>
+                                    <th>Client</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th class="text-end pe-4">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">E-commerce Website</div>
+                                        <div class="text-muted small">Shopping Cart Implementation</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #9b59b6;">EW</div>
+                                            <span>Emma Wilson</span>
+                                        </div>
+                                    </td>
+                                    <td>Pending</td>
+                                    <td>$950</td>
+                                    <td>
+                                        <span class="badge-custom badge-warning">Pending</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Authentication System</div>
+                                        <div class="text-muted small">OAuth Integration</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #e74c3c;">MG</div>
+                                            <span>Michael Green</span>
+                                        </div>
+                                    </td>
+                                    <td>May 15, 2023</td>
+                                    <td>$700</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Paid</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Data Visualization Dashboard</div>
+                                        <div class="text-muted small">Chart Components</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #f39c12;">SL</div>
+                                            <span>Sophia Lee</span>
+                                        </div>
+                                    </td>
+                                    <td>May 8, 2023</td>
+                                    <td>$1,100</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Paid</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold">Blog Platform</div>
+                                        <div class="text-muted small">Comment System</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-2" style="background-color: #3498db;">LM</div>
+                                            <span>Lisa Miller</span>
+                                        </div>
+                                    </td>
+                                    <td>April 22, 2023</td>
+                                    <td>$600</td>
+                                    <td>
+                                        <span class="badge-custom badge-success">Paid</span>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <button class="btn btn-sm btn-outline-primary">View</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white py-3">
+                    <nav>
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Other pages would be implemented similarly -->
+    </div>
+
+    <!-- Sidebar Toggle Button -->
+    <div class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Show the dashboard by default
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar navigation
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            const pages = document.querySelectorAll('.page');
+            
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Hide all pages
+                    pages.forEach(page => page.style.display = 'none');
+                    
+                    // Show the selected page
+                    const pageName = this.getAttribute('data-page');
+                    document.getElementById(pageName).style.display = 'block';
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 992) {
+                        document.getElementById('sidebar').classList.remove('show');
+                    }
+                });
+            });
+            
+            // Toggle sidebar on mobile
+            document.getElementById('sidebarToggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('show');
+            });
+            
+            // Find Bounties button
+            document.getElementById('findBountiesBtn').addEventListener('click', function() {
+                // Remove active class from all links
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to find bounties link
+                document.querySelector('.sidebar-link[data-page="find-bounties"]').classList.add('active');
+                
+                // Hide all pages
+                pages.forEach(page => page.style.display = 'none');
+                
+                // Show find bounties page
+                document.getElementById('find-bounties').style.display = 'block';
+            });
+            
+            // View All Bounties link
+            document.getElementById('viewAllBounties').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to find bounties link
+                document.querySelector('.sidebar-link[data-page="find-bounties"]').classList.add('active');
+                
+                // Hide all pages
+                pages.forEach(page => page.style.display = 'none');
+                
+                // Show find bounties page
+                document.getElementById('find-bounties').style.display = 'block';
+            });
+            
+            // View All Submissions link
+            document.getElementById('viewAllSubmissions').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all links
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to my submissions link
+                document.querySelector('.sidebar-link[data-page="my-submissions"]').classList.add('active');
+                
+                // Hide all pages
+                pages.forEach(page => page.style.display = 'none');
+                
+                // Show my submissions page
+                document.getElementById('my-submissions').style.display = 'block';
+            });
+            
+            // View Bounty Details
+            const viewBountyButtons = document.querySelectorAll('.view-bounty');
+            viewBountyButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Get bounty ID
+                    const bountyId = this.getAttribute('data-bounty-id');
+                    
+                    // Hide all pages
+                    pages.forEach(page => page.style.display = 'none');
+                    
+                    // Show bounty detail page
+                    document.getElementById('bounty-detail').style.display = 'block';
+                    
+                    // In a real application, you would fetch the bounty details based on the ID
+                    // For now, we'll just use the hardcoded data
+                });
+            });
+            
+            // Back to Bounties button
+            document.getElementById('backToBounties').addEventListener('click', function() {
+                // Remove active class from all links
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                
+                // Add active class to find bounties link
+                document.querySelector('.sidebar-link[data-page="find-bounties"]').classList.add('active');
+                
+                // Hide all pages
+                pages.forEach(page => page.style.display = 'none');
+                
+                // Show find bounties page
+                document.getElementById('find-bounties').style.display = 'block';
+            });
+            
+            // Work on Bounty button
+            document.getElementById('workOnBountyBtn').addEventListener('click', function() {
+                // Scroll to the Submit PR section
+                document.querySelector('.pr-form').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Save for Later button
+            document.getElementById('saveForLaterBtn').addEventListener('click', function() {
+                // In a real application, you would save the bounty for later
+                this.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-secondary');
+                this.disabled = true;
+                
+                // Show a toast or notification
+                alert('Bounty saved for later!');
+            });
+            
+            // Budget Range Slider
+            const budgetRange = document.getElementById('budgetRange');
+            const budgetValue = document.getElementById('budgetValue');
+            
+            budgetRange.addEventListener('input', function() {
+                budgetValue.textContent = `$${this.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+                if (this.value == this.max) {
+                    budgetValue.textContent += '+';
+                }
+            });
+            
+            // Apply Filters button
+            document.getElementById('applyFiltersBtn').addEventListener('click', function() {
+                // In a real application, you would apply the filters and update the bounties list
+                alert('Filters applied!');
+            });
+            
+            // Reset Filters button
+            document.getElementById('resetFiltersBtn').addEventListener('click', function() {
+                // Reset all filter inputs
+                document.querySelectorAll('.filter-sidebar input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+                
+                document.getElementById('budgetRange').value = document.getElementById('budgetRange').max;
+                budgetValue.textContent = `$${document.getElementById('budgetRange').max.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}+`;
+                
+                // In a real application, you would reset the filters and update the bounties list
+                alert('Filters reset!');
+            });
+            
+            // PR File Upload
+            const prFileUpload = document.getElementById('prFileUpload');
+            const prFilePreviewContainer = document.getElementById('prFilePreviewContainer');
+            
+            prFileUpload.addEventListener('change', function() {
+                prFilePreviewContainer.innerHTML = '';
+                
+                Array.from(this.files).forEach(file => {
+                    const filePreview = document.createElement('div');
+                    filePreview.className = 'file-preview mt-2';
+                    filePreview.innerHTML = `
+                        <i class="fas fa-file"></i>
+                        <span>${file.name}</span>
+                        <span class="remove"><i class="fas fa-times"></i></span>
+                    `;
+                    
+                    // Add remove event listener
+                    const removeBtn = filePreview.querySelector('.remove');
+                    removeBtn.addEventListener('click', function() {
+                        filePreview.remove();
+                    });
+                    
+                    prFilePreviewContainer.appendChild(filePreview);
+                });
+            });
+            
+            // PR Terms checkbox
+            const prTermsCheck = document.getElementById('prTermsCheck');
+            const submitPrBtn = document.getElementById('submitPrBtn');
+            
+            prTermsCheck.addEventListener('change', function() {
+                submitPrBtn.disabled = !this.checked;
+            });
+            
+            // Submit PR button
+            submitPrBtn.addEventListener('click', function() {
+                // Validate form
+                const prTitle = document.getElementById('prTitle').value;
+                const prDescription = document.getElementById('prDescription').value;
+                const prUrl = document.getElementById('prUrl').value;
+                
+                if (!prTitle || !prDescription || !prUrl) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+                
+                // In a real application, you would submit the PR
+                alert('PR submitted successfully!');
+                
+                // Redirect to my submissions
+                document.querySelector('.sidebar-link[data-page="my-submissions"]').click();
+            });
+            
+            // Search functionality
+            document.getElementById('searchBtn').addEventListener('click', function() {
+                const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+                
+                if (!searchTerm) {
+                    alert('Please enter a search term.');
+                    return;
+                }
+                
+                // In a real application, you would search for bounties
+                // For now, we'll just show a message
+                alert(`Searching for "${searchTerm}"...`);
+            });
+            
+            // Sort functionality
+            document.getElementById('sortSelect').addEventListener('change', function() {
+                const sortValue = this.value;
+                
+                // In a real application, you would sort the bounties
+                // For now, we'll just show a message
+                alert(`Sorting by ${sortValue}...`);
+            });
+        });
+    </script>
+</body>
+</html>
