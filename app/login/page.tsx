@@ -64,10 +64,6 @@ export default function LoginPage() {
       await signInAction(formData);
     } catch (error) {
       console.error("Login error:", error);
-      setStatusMessage({
-        type: "error",
-        message: "An unexpected error occurred. Please try again.",
-      });
     } finally {
       setIsLoading(false);
     }
